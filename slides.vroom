@@ -1,0 +1,189 @@
+# This is a sample Vroom input file. It should help you get started.
+#
+# Edit this file with your content. Then run `vroom --vroom` to start
+# the show!
+#
+# See `perldoc Vroom` for complete details.
+#
+---- config
+# Basic config options.
+title: Data::Printer
+vim: mvim
+indent: 5
+height: 18
+width: 69
+#auto_size: 1
+skip: 0
+
+# The following options are for Gvim usage.
+# vim: gvim
+# gvimrc: |
+#   set fuopt=maxhorz,maxvert
+#   set guioptions=egmLtT
+#   set guifont=Bitstream_Vera_Sans_Mono:h18
+#   set guicursor=a:blinkon0-ver25-Cursor
+#   colorscheme default
+
+---- center
+== Data::Printer
+
+by Breno G. de Oliveira
+
+
+
+----
+== Human Readable Data Dumper
+
++* excellent default settings
++    * scalar, array, hash
++         all display in clear format
++    * blessed refs
++         display class, methods, contents
++* pretty colors
+
+----
+== Getting Started
+
+* use Data::Printer
++ * use DDP;
++* p <var>;
++* prototypes
++ p $scalar; p %hash; p @array;
+
+---- perl,i4
+== #Examples
+
+use DDP;
+my @a = qw/one two three four/;
+my %h = (
+   hey => 'you',
+   dont => 'still water',
+   cant => 'have pudding',
+);
+p @a;  p %h;
+---- perl,i4
+== #Examples
+
+use JSON;
+use DDP;
+my $j = JSON->new;
+p $j;
+
+---- perl, i4
+== #Overcoming Obstacles
+
++# Somebody plugged this module full
+      # of 'Dumper' calls...
++     # yuck
++  #use Data::Dumper; <<< comment this out and add:
+  use DDP alias => 'Dumper';
+    # problem solved...
++# .. oh, don't forget 'p' only
+      # takes one parameter
++    my $hash = { joe => 'vs Volcano', sleepless => 'Seatle' };
+    print Dumper $hash;
+---- perl
+
+ # note that the color is lost; color codes are not included in
+    # return values unless you ask for them...
+    my $hash = { bob => 'what about him?', ground => 'hog' };
+    use DDP;print p($hash,colored=>1);
+
+----
+== Getting Fancy
+
+'p' has three modes for returning data...
+
++ * dump   + ( default )
+    * void context prints the data
+    * other context returns the data in a string
++      handy for extended log messages:
+   $self->log->message('failed to stump fribbler:',p($self),
+        ' while trying to bumble:',p(@args));
++ * void
+    * always print and return void
++      I'm sure someone has a use for this...
++ * pass
+    * always print; return the original value
++   My favorite mode...
+
+----
+== Use it in function calls
+
+     doTheRightThing( $parameter );
+
+----
+
+     use PPD return_value => 'pass';
+
+     doTheRightThing( p $parameter );
+
+   now we can examine the data passed with very little
+     code change...
+
+----
+
+== Use it in object method streams
+
+   $can->open->warm(200,600)->eat;
+
+----
+
+     package Can::Of::Beans;
+
+     use PPD return_value => 'pass';
+
+ anywhere else:
+
+   $can->p->open->p->warm(200,600)->p->eat->p;
+
+gives a dump of the object at each step...
+----
+== Even Fancier
+
+* Default target is STDOUT
+    output => 'stdout'
++* output to any file handle
+    output => 'stderr'
+    output => *STDERR
+    output => $my_fh
++* or use a filename
+    output => $filename
++* or a scalar ref...
+    output => \$scalar
+----
+== Highly Customizable
+
++* Filters
++     'DateTime'      => sub { $_[0]->ymd }
++     'HTTP::Request' => sub { $_[0]->uri },
++   Data::Printer::Filters
++      existing filters for DBI & DateTime
++* Custom Colors
++     By Type ( HASH, ARRAY, SCALAR, ... )
++     By Feature  ( Weak ref, Tainted, ... )
+
+----
+== Highly Customizable ( part deux )
+
++* Personal Config File
++* Customizable Call Stack
++   Custom Message
++   Custom Depth
+
+----
+== Well Connected
+
+* Plugins
++  DB::Pluggable
++  Any::Rendere
++  Devel::REPL
+
+----
+
+the CPAN page:
+
+http://search.cpan.org/~garu/Data-Printer-0.3/lib/Data/Printer.pm
+
+----
+== The End

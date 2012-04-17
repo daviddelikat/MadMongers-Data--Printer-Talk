@@ -9,10 +9,10 @@
 # Basic config options.
 title: Data::Printer
 vim: mvim
-indent: 5
-height: 18
-width: 69
-#auto_size: 1
+indent: 10
+height: 22
+width: 80
+auto_size: 1
 skip: 0
 
 # The following options are for Gvim usage.
@@ -34,21 +34,42 @@ by Breno G. de Oliveira
 ----
 == Human Readable Data Dumper
 
-+* excellent default settings
-+    * scalar, array, hash
-+         all display in clear format
-+    * blessed refs
-+         display class, methods, contents
-+* pretty colors
++* One Way Conversion
++    * Not computer readable
++    * Not comprehensive rendering
++    * Not a full replacement for
++        * JSON
++        * YAML
++        * Data::Dumper...
+----
+== Human Readable Data Dumper
+
++* Excellent Default Settings
++    * Scalar, Array, Hash
++         All display in clear format
++    * Blessed Refs
++         Display Class, Methods, Contents
+----
+== Human Readable Data Dumper
+
++* Customizable
++    * Everything...
++    * Really.
++* Expandable
++    * Filters
++    * Plugins
++* Pretty Colors
 
 ----
 == Getting Started
 
-* use Data::Printer
-+ * use DDP;
+* cpanm -S Data::Printer...
++* use Data::Printer
++    * use DDP;
 +* p <var>;
-+* prototypes
-+ p $scalar; p %hash; p @array;
++* Prototypes
++    * p $scalar; p %hash; p @array;
++* One Item at a Time
 
 ---- perl,i4
 == #Examples
@@ -75,8 +96,8 @@ p $j;
 +# Somebody plugged this module full
       # of 'Dumper' calls...
 +     # yuck
-+  #use Data::Dumper; <<< comment this out and add:
-  use DDP alias => 'Dumper';
++  #use Data::Dumper; <<< comment this out
++  use DDP alias => 'Dumper';   # add this...
     # problem solved...
 +# .. oh, don't forget 'p' only
       # takes one parameter
@@ -84,17 +105,25 @@ p $j;
     print Dumper $hash;
 ---- perl
 
- # note that the color is lost; color codes are not included in
-    # return values unless you ask for them...
+		 # colors?
+
     my $hash = { bob => 'what about him?', ground => 'hog' };
     use DDP;print p($hash,colored=>1);
 
+---- perl
+                   # OR:
+
+    use DDP colored => 1 ;
+    my $hash = { bob => 'what about him?', ground => 'hog' };
+    print hello => p $hash;
+
 ----
 == Getting Fancy
+----
+== Getting Fancy: Three Modes
 
-'p' has three modes for returning data...
-
-+ * dump   + ( default )
++ * dump
++   * default
     * void context prints the data
     * other context returns the data in a string
 +      handy for extended log messages:
@@ -108,75 +137,100 @@ p $j;
 +   My favorite mode...
 
 ----
-== Use it in function calls
+== Function Calls
 
-     doTheRightThing( $parameter );
+doTheRightThing( $parameter );
+
+----
+== Function Calls
+
+use DDP return_value => 'pass';
+
+doTheRightThing( p $parameter );
+
+----
+== Method Sequence
+
+$can->open->warm(200,600)->eat;
+
+----
+== Method Sequence
+
+package Can::Of::Beans;
+
+use DDP return_value => 'pass';
+
++ $can->p->open->p->warm(200,600)->p->eat->p;
 
 ----
 
-     use PPD return_value => 'pass';
+      OR:
 
-     doTheRightThing( p $parameter );
+use DDP return_value => 'pass', colored => 1;  # in the main module...
 
-   now we can examine the data passed with very little
-     code change...
-
-----
-
-== Use it in object method streams
-
-   $can->open->warm(200,600)->eat;
+$can->DDP::p->open->DDP::p->warm(200,600)->DDP::p->eat->DDP::p;
 
 ----
+== #Example
 
-     package Can::Of::Beans;
+use DDP return_value => 'pass', colored => 1;
 
-     use PPD return_value => 'pass';
+package TIM;
+sub new { bless [ ], shift }
+sub junk { $_[0][1] = 'junk'; $_[0] }
+sub sam { $_[0][2] = 'sam'; $_[0] }
+sub oye { $_[0][0] = 'oye'; $_[0] }
 
- anywhere else:
+package main;
+TIM->new->DDP::p->junk->DDP::p->sam->DDP::p->oye->DDP::p;
 
-   $can->p->open->p->warm(200,600)->p->eat->p;
-
-gives a dump of the object at each step...
 ----
 == Even Fancier
+----
+== Even Fancier: Redirect Output
 
 * Default target is STDOUT
     output => 'stdout'
-+* output to any file handle
++* Output to any File Handle
     output => 'stderr'
     output => *STDERR
     output => $my_fh
-+* or use a filename
++* Use a Filename
     output => $filename
-+* or a scalar ref...
++* Scalar Ref...
     output => \$scalar
 ----
 == Highly Customizable
 
-+* Filters
-+     'DateTime'      => sub { $_[0]->ymd }
-+     'HTTP::Request' => sub { $_[0]->uri },
-+   Data::Printer::Filters
-+      existing filters for DBI & DateTime
 +* Custom Colors
-+     By Type ( HASH, ARRAY, SCALAR, ... )
-+     By Feature  ( Weak ref, Tainted, ... )
++    * By Type ( HASH, ARRAY, SCALAR, ... )
++    * By Feature  ( Weak ref, Tainted, ... )
++* Personal Config File
++* Caller Info
++    * One Level Stack Trace
++    * Custom Message
++          With Placeholders
 
 ----
 == Highly Customizable ( part deux )
 
-+* Personal Config File
-+* Customizable Call Stack
-+   Custom Message
-+   Custom Depth
++* Filters
++     'DateTime'      => sub { $_[0]->ymd },
++     'HTTP::Request' => sub { $_[0]->uri },
++   Data::Printer::Filters
++      existing filters for DBI
+        -external => [ 'DB' ],
+     autoformat db handles and statements
++                               & DateTime
+        -external => [ 'DateTime' ],
+    autoformat 8 date related classes
 
 ----
 == Well Connected
 
-* Plugins
+* Plugins for Other Modules
 +  DB::Pluggable
-+  Any::Rendere
++  Any::Renderer
 +  Devel::REPL
 
 ----

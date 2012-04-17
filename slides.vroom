@@ -181,9 +181,13 @@ gives a dump of the object at each step...
 
 ----
 
-the CPAN page:
+CPAN:
 
 http://search.cpan.org/~garu/Data-Printer-0.3/lib/Data/Printer.pm
+
+Slide-show:
+
+git://github.com/daviddelikat/MadMongers-Data--Printer-Talk.git
 
 ----
 == The End
